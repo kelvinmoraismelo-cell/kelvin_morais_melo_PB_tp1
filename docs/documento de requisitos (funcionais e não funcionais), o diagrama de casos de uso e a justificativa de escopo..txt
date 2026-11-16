@@ -1,0 +1,203 @@
+Requisitos Funcionais (RF)
+RF01 - Cadastro de Animal: O recepcionista deve poder cadastrar um animal informando nome, espécie (cão ou gato), idade, nome do tutor e telefone do tutor.
+
+RF02 - Cadastro de Veterinário: O recepcionista deve poder cadastrar veterinários informando nome e CRMV.
+
+RF03 - Agendamento de Consulta: O recepcionista deve poder agendar uma consulta vinculando um animal e um veterinário, definindo data, horário e definindo a situação inicial como "agendada".
+
+RF04 - Validação de Horário de Atendimento: O sistema deve garantir que as consultas ocorram estritamente de segunda a sexta-feira, das 8h às 18h, com duração fixa de 30 minutos.
+
+RF05 - Restrição de Conflito de Agenda: O sistema não deve permitir que o mesmo veterinário tenha duas consultas agendadas para o mesmo horário.
+
+RF06 - Validação de Data Futura: O sistema não deve permitir o agendamento de consultas em datas retroativas (passadas).
+
+RF07 - Cancelamento de Consulta: O recepcionista deve poder cancelar uma consulta, desde que sua situação atual seja estritamente "agendada".
+
+RF08 - Consulta de Agenda Diária: O veterinário deve poder visualizar sua agenda de consultas para o dia corrente.
+
+RF09 - Realização de Consulta: O veterinário responsável pela consulta deve poder registrá-la como "realizada", adicionando observações obrigatórias sobre o atendimento, desde que estivesse previamente com o status "agendada".
+
+Requisitos Não Funcionais (RNF)
+
+RNF01 - Linguagem e Plataforma: O sistema standalone inicial deve ser desenvolvido em Java (JDK 21 LTS).
+
+RNF02 - Usabilidade em Console/Interface: O programa inicial rodará via linha de comando (Console), garantindo clareza nas entradas e saídas de dados.
+
+RNF03 - Confiabilidade e Validação: Regras de negócio essenciais (como horários comerciais e conflitos de agenda) devem ser validadas por código antes de confirmar qualquer operação.
+
+Especificação de Casos de Uso (UML)
+Atores do Sistema:
+Recepcionista: Papel responsável pelo gerenciamento de cadastros básicos e pela abertura/cancelamento de agenda.
+
+Veterinário: Papel responsável por acompanhar os atendimentos diários e registrar as evoluções clínicas.
+
+Caso de Uso 1: Agendar Consulta
+Ator Principal: Recepcionista
+
+Pré-condições: O animal e o veterinário já devem estar cadastrados no sistema.
+
+Fluxo Principal:
+
+O recepcionista solicita a criação de um novo agendamento.
+
+O sistema solicita o animal, o veterinário, a data e o horário desejados.
+
+O recepcionista insere os dados.
+
+O sistema valida se a data é futura, se o horário está entre 8h e 18h (segunda a sexta) e se o veterinário já possui compromisso nesse horário.
+
+Estando livres os critérios, o sistema grava o agendamento com a situação "agendada" e exibe mensagem de sucesso.
+
+Fluxo Alternativo (A1 - Horário Indisponível ou Conflito):
+
+Passo 4.1: Caso o veterinário já possua consulta no horário ou a data seja inválida, o sistema rejeita o agendamento e exibe uma mensagem de erro explicativa ao recepcionista, retornando ao menu principal.
+
+Caso de Uso 2: Cancelar Consulta
+Ator Principal: Recepcionista
+
+Pré-condições: A consulta deve existir no sistema.
+
+Fluxo Principal:
+
+O recepcionista busca a consulta desejada.
+
+O sistema exibe os detalhes e a situação atual da consulta.
+
+O recepcionista solicita o cancelamento.
+
+O sistema verifica se a situação da consulta é "agendada".
+
+O sistema altera a situação da consulta para "cancelada" e confirma a operação.
+
+Fluxo Alternativo (A1 - Consulta já realizada ou cancelada):
+
+Passo 4.1: Se a consulta já estiver "realizada" ou "cancelada", o sistema impede o cancelamento e exibe um aviso informando que a operação não é permitida.
+
+Caso de Uso 3: Realizar Consulta
+Ator Principal: Veterinário
+
+Pré-condições: O veterinário deve estar autenticado/identificado e a consulta deve constar como "agendada" na sua agenda.
+
+Fluxo Principal:
+
+O veterinário seleciona uma consulta agendada do seu dia.
+
+O sistema exibe os dados do animal e o histórico do agendamento.
+
+O veterinário insere as observações clínicas do atendimento.
+
+O veterinário confirma a conclusão do atendimento.
+
+O sistema atualiza a situação da consulta para "realizada" e salva as observações.
+
+Fluxo Alternativo (A1 - Tentativa de alterar consulta alheia ou com status inválido):
+
+Passo 1.1: Se o veterinário tentar realizar uma consulta de outro profissional ou cujo status não seja "agendado", o sistema bloqueia a ação e emite um alerta.
+
+3. Configuração do Ambiente de Desenvolvimento
+
+public class InfoAmbiente {
+   public static void main(String[] args) {
+	   System.out.println(System.getProperty("os.name"));
+	   System.out.println(System.getProperty("java.version"));
+	   System.out.println(System.getProperty("user.dir"));
+
+   }
+
+}
+
+
+Windows 11
+21.0.12.1
+C:\Users\kelvin\eclipse-workspace\KelvinmeloApp
+
+4. Esboço de Programa Standalone Inicial
+
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.Scanner;
+
+public class VidaPetStandalone {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("=== Sistema VidaPet - Prototipo Inicial (TP1) ===");
+        
+        // Simulação de cadastro rápido de dados primitivos para teste de regras
+        String nomeAnimal = "Thor";
+        String especieAnimal = "Cão";
+        int idadeAnimal = 3;
+        String nomeTutor = "Carlos Silva";
+        String telefoneTutor = "(35) 99888-7766";
+
+        String nomeVeterinario = "Dra. Ana Souza";
+        String crmvVet = "CRMV-MG 12345";
+
+        System.out.println("\n[Cadastro Simulado Concluído]");
+        System.out.println("Animal: " + nomeAnimal + " (" + especieAnimal + "), " + idadeAnimal + " anos.");
+        System.out.println("Tutor: " + nomeTutor + " - Tel: " + telefoneTutor);
+        System.out.println("Veterinário: " + nomeVeterinario + " (CRMV: " + crmvVet + ")");
+
+        System.out.println("\n--- Simulação de Validação de Agendamento ---");
+        System.out.print("Informe a data da consulta (AAAA-MM-DD): ");
+        String dataStr = scanner.nextLine();
+        LocalDate dataConsulta = LocalDate.parse(dataStr);
+
+        System.out.print("Informe o horário da consulta (HH:MM): ");
+        String horaStr = scanner.nextLine();
+        LocalTime horaConsulta = LocalTime.parse(horaStr);
+
+        // Regra 3: Não permitir datas passadas
+        if (dataConsulta.isBefore(LocalDate.now())) {
+            System.out.println("Erro: Não é possível agendar consultas em datas que já passaram.");
+            return;
+        }
+
+        // Regra 1: Segunda a sexta, das 8h às 18h
+        DayOfWeek diaSemana = dataConsulta.getDayOfWeek();
+        boolean diaUtil = (diaSemana != DayOfWeek.SATURDAY && diaSemana != DayOfWeek.SUNDAY);
+        boolean horarioComercial = !horaConsulta.isBefore(LocalTime.of(8, 0)) && 
+                                   !horaConsulta.isAfter(LocalTime.of(18, 0));
+
+        if (!diaUtil) {
+            System.out.println("Erro: A clínica funciona apenas de segunda a sexta-feira.");
+        } else if (!horarioComercial) {
+            System.out.println("Erro: Horário fora do expediente (8h às 18h).");
+        } else {
+            System.out.println("\nSucesso! Consulta agendada para " + nomeAnimal + 
+                               " com " + nomeVeterinario + 
+                               " em " + dataConsulta + " às " + horaConsulta + ".");
+            System.out.println("Situação atual: AGENDADA (Duração estimada: 30 minutos).");
+        }
+
+        scanner.close();
+    }
+}
+
+=== Sistema VidaPet - Prototipo Inicial (TP1) ===
+
+[Cadastro Simulado Concluído]
+Animal: Thor (Cão), 3 anos.
+Tutor: Carlos Silva - Tel: (35) 99888-7766
+Veterinário: Dra. Ana Souza (CRMV: CRMV-MG 12345)
+
+--- Simulação de Validação de Agendamento ---
+Informe a data da consulta (AAAA-MM-DD): 2026-11-20
+Informe o horário da consulta (HH:MM): 14:00
+
+Sucesso! Consulta agendada para Thor com Dra. Ana Souza em 2026-11-20 às 14:00.
+Situação atual: AGENDADA (Duração estimada: 30 minutos).
+
+5. Justificativa do Escopo e Suposições
+
+
+O que entrou agora: A definição dos requisitos, os casos de uso, a configuração do Java e um programa simples em console para testar as regras principais: horário comercial das 8h às 18h de segunda a sexta, proibir datas passadas e evitar que o mesmo veterinário tenha dois horários no mesmo minuto.
+
+O que fica para depois: Criar classes orientadas a objetos, salvar dados em banco de dados, criar telas e usar o Spring Boot. Cada etapa do sistema tem o seu momento certo de ser construída.
+
+Suposições que fiz:
+
+Padrão de Data e Hora: Usei o formato padrão do Java (AAAA-MM-DD para dias e HH:MM para horas) para facilitar a validação dos horários sem complicação.
+
+Execução Local: O programa roda direto no computador, focado apenas em testar a lógica das regras de negócio (duração de 30 minutos por consulta e controle de agenda do veterinário), sem precisar simular vários usuários ao mesmo tempo por enquanto.
